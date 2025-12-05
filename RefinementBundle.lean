@@ -22,26 +22,42 @@ providing the geometric foundation for index-theoretic questions.
 - **Connection**: Encoded in parent maps between levels
 - **Curvature**: The heat coefficient a₂ = (log m)/12
 
-## Purpose
+## The Branching Factor m
 
-This formalization makes precise the question:
-"What is the volume of the refinement fiber?"
+The theory is **m-agnostic**: all results hold for any branching factor m ≥ 2.
+However, specific geometric models determine m:
 
-The answer determines whether 137 can emerge from an index theorem.
+| Model | Spatial Dim | Branching | α_ref | Status |
+|-------|-------------|-----------|-------|--------|
+| 3D dyadic | 3 | m = 2³ = 8 | ≈ 0.36 | Physical space |
+| 4D dyadic | 4 | m = 2⁴ = 16 | ≈ 0.64 | Spacetime |
+| 5D dyadic | 5 | m = 2⁵ = 32 | ≈ 1.00 | Critical/strong coupling |
+
+**Critical observation**: The "critical dimension" d = 5 where α_ref ≈ 1 is the
+exponent in m = 2^d, not necessarily the dimension of physical space.
+
+**Model hypothesis (not forced by the math)**:
+If the microscopic geometry is genuinely 5D and dyadically refined, then m = 32
+is forced and we're at critical coupling. This is a structural assumption about
+the universe, not a consequence of refinement algebra itself.
 
 ## Key Results
 
-- `refinementCoupling`: α_ref = (log m)²/12
-- `criticalDimension`: d = 5 gives α_ref = 1
+- `refinementCoupling`: α_ref = (log m)²/12 — valid for any m
+- `criticalDimension`: d = 5 gives α_ref = 1 in the dyadic family m = 2^d
 - `heatCoefficientA2`: a₂ = (log m)/12
 
 ## Scientific Status
 
-**Locked (mathematically exact):**
+**Locked (mathematically exact, m-agnostic):**
 - Refinement spectrum {k · log m}
 - Partition function Z(β) = 1/(1 - m^{-β})
 - Heat coefficients from Bernoulli expansion
-- Critical dimension d = 5
+- α_ref = (log m)²/12
+
+**Model-dependent:**
+- Choice of m (requires specifying spatial dimension of base)
+- Whether "critical dimension 5" is physical or parametric
 
 **Open (requires additional structure):**
 - Physical coupling axiom
@@ -69,10 +85,26 @@ def dyadicBranching (d : ℕ) (hd : 1 ≤ d) : BranchingData where
     calc 2^d ≥ 2^1 := Nat.pow_le_pow_right (by norm_num : 1 ≤ 2) hd
          _ = 2 := by norm_num
 
-/-- Standard dimensions and their branching factors. -/
-def branching3D : BranchingData := dyadicBranching 3 (by norm_num)  -- m = 8
-def branching4D : BranchingData := dyadicBranching 4 (by norm_num)  -- m = 16
-def branching5D : BranchingData := dyadicBranching 5 (by norm_num)  -- m = 32
+/-- 3D dyadic branching: m = 8.
+    This is the natural choice if the spatial base is 3-dimensional.
+    Gives α_ref = (log 8)²/12 ≈ 0.36 — weak coupling. -/
+def branching3D : BranchingData := dyadicBranching 3 (by norm_num)
+
+/-- 4D dyadic branching: m = 16.
+    Natural for 4D spacetime refinement.
+    Gives α_ref = (log 16)²/12 ≈ 0.64 — intermediate coupling. -/
+def branching4D : BranchingData := dyadicBranching 4 (by norm_num)
+
+/-- 5D dyadic branching: m = 32.
+    **MODEL HYPOTHESIS**: This assumes a genuinely 5D spatial base.
+    Gives α_ref = (log 32)²/12 ≈ 1.00 — critical/strong coupling.
+
+    If the physical universe has 5D microscopic geometry with dyadic refinement,
+    then m = 32 is forced. This is not derived from 3D + fiber structure;
+    it requires the base manifold itself to be 5-dimensional.
+
+    The "Index = 137" conjecture assumes this model. -/
+def branching5D : BranchingData := dyadicBranching 5 (by norm_num)
 
 /-! ## Section 2: The Refinement Coupling Constant -/
 

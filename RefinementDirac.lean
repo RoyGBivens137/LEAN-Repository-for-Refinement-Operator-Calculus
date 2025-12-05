@@ -13,16 +13,35 @@ import Mathlib.Data.Matrix.Basic
 /-!
 # Refinement Dirac Operator
 
-This file formalizes the Dirac operator on the 5D refinement bundle:
+This file formalizes the Dirac operator structure for refinement geometry.
 
-  M⁵ = ℝ³ × ℕ × ℝ₊
-       ↑    ↑    ↑
-     space  k    β
+## Two Geometric Viewpoints
 
-where:
-- ℝ³ is the spatial base
-- k ∈ ℕ is the refinement level (discrete fiber)
-- β ∈ ℝ₊ is the inverse temperature (Gibbs dual to k, equals KK radius)
+There are two ways to interpret "5D" in this context:
+
+### Viewpoint 1: Product structure (3D base + 2D fiber)
+
+  M = ℝ³ × ℕ × ℝ₊
+      ↑    ↑    ↑
+    space  k    β
+
+- ℝ³ is the spatial base → dyadic refinement gives m = 2³ = 8
+- k ∈ ℕ is the refinement level (not a spatial coordinate)
+- β ∈ ℝ₊ is the inverse temperature (Gibbs dual to k)
+
+In this viewpoint: **m = 8, α_ref ≈ 0.36** (weak coupling)
+
+### Viewpoint 2: Genuinely 5D spatial base (MODEL HYPOTHESIS)
+
+  M⁵ = genuine 5D spatial manifold
+
+- All 5 dimensions are spatial
+- Dyadic refinement gives m = 2⁵ = 32
+- The "extra 2 dimensions" are physical, not fiber artifacts
+
+In this viewpoint: **m = 32, α_ref ≈ 1.00** (critical coupling)
+
+**The "Index = 137" conjecture assumes Viewpoint 2.**
 
 ## The Dirac Operator Structure
 
@@ -33,7 +52,7 @@ The 5D Dirac operator has the form:
 where:
 - γⁱ (i = 1,2,3) are spatial Clifford generators
 - γ⁴ couples to the refinement fiber via D_k = a⁺ - a⁻
-- γ⁵ is the chirality operator, coupling to the thermal direction
+- γ⁵ couples to the thermal/fifth direction
 
 ## The Index Question
 
@@ -41,7 +60,7 @@ The central computation is:
 
   Index(D₅) = ?
 
-The Casimir docking conjecture predicts |Index| = 137 at critical dimension.
+At critical dimension (m = 32, 5D spatial base), the conjecture is |Index| = 137.
 
 ## Mathematical Foundation
 
@@ -50,7 +69,7 @@ The Clifford algebra Cl(3,2) has signature (+ + + - -) corresponding to:
 - One refinement dimension (negative, discrete)
 - One thermal dimension (negative, continuous)
 
-Alternatively, Cl(4,1) with signature (+ + + + -) treats β as timelike.
+Alternatively, Cl(5,0) or Cl(4,1) for genuinely 5D spatial geometry.
 
 -/
 
@@ -460,15 +479,37 @@ To prove Index = 137, we would need to:
 This is a finite but involved computation.
 -/
 
-/-- Standard data for critical dimension: m = 32, d = 5. -/
+/-- 3D spatial data: m = 8 (honest 3D base).
+    This is the natural choice if we're only refining 3D space.
+    Gives α_ref ≈ 0.36 — weak coupling.
+    For α = 1/137, would need |Index| ≈ 49, not 137. -/
+def spatial3DData : Dirac5DData where
+  branchingFactor := 8
+  branching_ge_two := by norm_num
+  maxLevel := 39
+  spatialDim := 3
+  truncated := true
+
+/-- 5D spatial data: m = 32.
+    **MODEL HYPOTHESIS**: Assumes genuinely 5D microscopic geometry.
+    Gives α_ref ≈ 1.00 — critical/strong coupling.
+
+    This is NOT derived from "3D + fiber = 5D". It requires the base
+    manifold itself to be 5-dimensional, so that dyadic refinement
+    naturally produces m = 2⁵ = 32.
+
+    The "Index = 137" conjecture assumes this model. -/
 def criticalDimensionData : Dirac5DData where
   branchingFactor := 32
   branching_ge_two := by norm_num
   maxLevel := 39  -- Heisenberg floor for 1m → Planck
-  spatialDim := 3
+  spatialDim := 3  -- Note: this is the *perceived* dimension, not the model dimension
   truncated := true
 
-/-- The 137 conjecture: at critical dimension, |Index| = 137. -/
+/-- The 137 conjecture: at critical dimension (5D model), |Index| = 137.
+
+    **This is a model-dependent conjecture**, not a theorem.
+    It assumes the 5D spatial hypothesis (m = 32). -/
 axiom index_137_conjecture :
   |dirac5DIndex criticalDimensionData| = 137
 
