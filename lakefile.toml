@@ -24,3 +24,9 @@ name = "RefinementAlgebra"
 
 [[lean_lib]]
 name = "CasimirUniversality"
+
+[[lean_lib]]
+name = "RefinementBundle"
+
+[[lean_lib]]
+name = "RefinementDirac"
