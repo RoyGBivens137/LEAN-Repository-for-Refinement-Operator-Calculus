@@ -42,7 +42,7 @@ commutes via the partition function Z(β) = Tr(e^{-βĤ}).
 └── lakefile.toml              # Build configuration
 ```
 
-**Total: 12 axioms**, each corresponding to established results from optimal transport, discrete exterior calculus, and profinite group theory.
+**Total: 11 axioms**, each corresponding to established results from optimal transport, discrete exterior calculus, and profinite group theory.
 
 ## The Core Idea
 
@@ -89,7 +89,6 @@ lake build
 | 9 | `weighted_coface_coface` | Desbrun et al., DEC (2005) |
 | 10 | `offDiagonal_sum_zero` | Cartan (1922) |
 | 11 | `diagonal_sum_identity` | Abraham–Marsden (1978) |
-| 12 | `cyclic_tower_rigidity` | Lazard, Publ. Math. IHÉS 26 (1965) |
 
 ## Connection to Physics
 
@@ -108,7 +107,6 @@ Submitted to the Springer Journal of Automated Reasoning December 4th 2025. Cita
 ## Primary References
 
 - Connes, A. *Noncommutative Geometry*. Academic Press, 1994.
-- Lazard, M. "Groupes analytiques p-adiques." Publ. Math. IHÉS 26, 1965.
 - Moser, J. "On the volume elements on a manifold." Trans. AMS 120, 1965.
 - Du, Faber, Gunzburger. "Centroidal Voronoi tessellations." SIAM Review 41(4), 1999.
 - Villani, C. *Optimal Transport: Old and New*. Springer, 2009.
