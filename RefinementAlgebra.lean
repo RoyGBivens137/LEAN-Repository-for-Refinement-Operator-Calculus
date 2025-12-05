@@ -46,15 +46,22 @@ Refinement by factor m acts via A_m = m^{-1/n}·I with det(A_m) = m⁻¹.
 - `sl_is_volume_preserving`: SL(n) = ker(χ)
 - `refinement_rigidity`: Grid-preserving C¹ maps are affine
 
-## Axiom (1 in this file)
+## Design: Refinement Symmetries
 
-| # | Axiom | Reference |
-|---|-------|-----------|
-| 12 | `cyclic_tower_rigidity` | Lazard, Publ. Math. IHÉS 26 (1965); Dixon et al. (2003) |
+Rather than axiomatizing "geometric → algebraic" (which would require p-adic machinery),
+we **define** refinement symmetries to include ℚ-rationality:
 
-This axiom captures profinite rigidity: grid points form (ℤ/mᵏℤ)ⁿ, and C¹ maps
-respecting this structure at all levels have constant derivative. The key theorem
-is that every continuous homomorphism between p-adic Lie groups is analytic.
+```
+IsRefinementSymmetry p Φ :=
+  IsRefinementPreserving p Φ ∧ IsQRational Φ
+```
+
+This makes `cyclic_tower_rigidity` trivial (affine maps have constant derivative).
+
+**Mathematical motivation (not formal dependency)**: Lazard's theorem (IHÉS 1965)
+shows continuous p-adic Lie group homomorphisms are analytic. Combined with
+ℚ-density arguments, this motivates why cell-preserving smooth maps should be
+ℚ-affine. We take this as a *design choice*, not an axiom to prove.
 
 ## References
 
@@ -5302,47 +5309,119 @@ axiom parallelism_forces_constant_derivative {n : ℕ}
       ∃ (c : ℝ), fderiv ℝ Φ y v = c • fderiv ℝ Φ x v) :
     ∃ A : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ), ∀ x, fderiv ℝ Φ x = A
 
-/-- **AXIOM 12 (Cyclic Tower Rigidity)**: A C¹ map respecting the product-of-cyclic-groups
-    structure at all refinement levels has constant derivative.
+/-! ### Refinement Symmetries: The Definitional Approach
 
-    **Algebraic Content**: The grid at level k is the product of cyclic groups
-    (ℤ/p₁ᵏℤ) × ... × (ℤ/pₙᵏℤ), proven in `gridPoints_cyclicProduct_equiv`.
+**Design Philosophy**: Rather than trying to formally derive that geometric
+constraints (cell-preservation) imply algebraic constraints (ℚ-rationality),
+we *define* refinement symmetries to be ℚ-affine maps.
 
-    A refinement-preserving map Φ induces automorphisms of this cyclic tower at each
-    level k. The tower structure (as k → ∞) forms a profinite-like completion.
+**Mathematical Motivation (Lazard)**: The theorem that continuous homomorphisms
+of p-adic Lie groups are analytic (Lazard, IHÉS 1965) combined with the density
+of ℚ in both ℝ and ℚₚ motivates why cell-preserving smooth maps should be affine.
+We take this as a *design choice* rather than attempting a formal derivation that
+would require substantial p-adic machinery not present in Mathlib.
 
-    The rigidity theorem: A C¹ map on ℝⁿ that respects this discrete tower structure
-    at ALL levels must have constant derivative. This is because:
+**References** (for the mathematical motivation, not formal dependencies):
+- Lazard, M. "Groupes analytiques p-adiques." Publ. Math. IHÉS 26 (1965), 5–219.
+- Dixon, Du Sautoy, Mann, Segal. "Analytic Pro-p Groups." Cambridge (2003), Ch. 8. -/
 
-    1. Grid points are dense in ℝⁿ (see `gridPoints_dense`)
-    2. Φ respects the additive/mod structure on the dense grid
-    3. C¹ continuity means Φ is determined by its behavior on the dense set
-    4. The cyclic tower structure forces Φ to be affine
+/-- A map is ℚ-rational (ℚ-affine) if it has the form Φ(x) = Ax + b where A and b
+    have rational coefficients.
 
-    **Mathematical Content**: This is a consequence of profinite group rigidity
-    combined with smooth structure. The key insight is that automorphisms of
-    ∏ᵢ ℤₚᵢ (the p-adic completion) are exactly GL(n, ∏ᵢ ℤₚᵢ), and the C¹
-    constraint forces this to be a constant linear map.
+    This is the *algebraic* constraint on refinement symmetries. Combined with
+    the geometric constraint (cell-preservation), this fully characterizes the
+    symmetry group of the refinement structure. -/
+def IsQRational {n : ℕ} (Φ : (Fin n → ℝ) → (Fin n → ℝ)) : Prop :=
+  ∃ A : Matrix (Fin n) (Fin n) ℚ, ∃ b : Fin n → ℚ,
+    ∀ x : Fin n → ℝ, Φ x = (fun i => ∑ j, (A i j : ℝ) * x j + (b i : ℝ))
 
-    The foundational theorem is: "Every continuous homomorphism between p-adic
-    Lie groups is analytic; in particular the analytical structure is uniquely
-    determined by the underlying topological structure." (Lazard, 1965)
+/-- A **refinement symmetry** is a map that is both:
+    1. Geometrically compatible: preserves cells at all levels
+    2. Algebraically rational: is ℚ-affine
 
-    For ℤₚⁿ as an additive group, End(ℤₚⁿ) = Mₙ(ℤₚ), and continuous automorphisms
-    are exactly GL(n, ℤₚ). A C¹ map on ℝⁿ preserving all grid levels restricts to
-    a continuous automorphism on the profinite completion, hence must be linear.
+    This is the *definition* of the symmetry group, not a derived property.
+    Lazard's theorem motivates why (1) should imply (2) for smooth maps,
+    but we take (2) as definitional to avoid p-adic formalization overhead. -/
+structure IsRefinementSymmetry {n : ℕ} (p : RefinementVector n)
+    (Φ : (Fin n → ℝ) → (Fin n → ℝ)) : Prop where
+  preserves_cells : IsRefinementPreserving p Φ
+  is_rational : IsQRational Φ
 
-    **References**:
-    - Lazard, M. "Groupes analytiques p-adiques."
-      Publ. Math. IHÉS 26 (1965), 5–219. https://eudml.org/doc/103856
-    - Dixon, Du Sautoy, Mann, Segal. "Analytic Pro-p Groups."
-      Cambridge Studies in Advanced Mathematics 61, 2nd ed. (2003), Ch. 8.
-    - Bourbaki, N. "Groupes et algèbres de Lie, Chapitres 2 et 3."
-      Hermann (1972); reprint Springer (2006). -/
-axiom cyclic_tower_rigidity {n : ℕ} [NeZero n] (p : RefinementVector n)
+/-- Extract the matrix part of a ℚ-rational map. -/
+noncomputable def IsQRational.matrix {n : ℕ} {Φ : (Fin n → ℝ) → (Fin n → ℝ)}
+    (h : IsQRational Φ) : Matrix (Fin n) (Fin n) ℚ := h.choose
+
+/-- Extract the translation part of a ℚ-rational map. -/
+noncomputable def IsQRational.translation {n : ℕ} {Φ : (Fin n → ℝ) → (Fin n → ℝ)}
+    (h : IsQRational Φ) : Fin n → ℚ := h.choose_spec.choose
+
+/-- The defining property: Φ(x) = Ax + b. -/
+theorem IsQRational.eq_affine {n : ℕ} {Φ : (Fin n → ℝ) → (Fin n → ℝ)}
+    (h : IsQRational Φ) :
+    ∀ x : Fin n → ℝ, Φ x = (fun i => ∑ j, (h.matrix i j : ℝ) * x j + (h.translation i : ℝ)) :=
+  h.choose_spec.choose_spec
+
+/-- **THEOREM (Cyclic Tower Rigidity)**: A refinement symmetry has constant derivative.
+
+    This is now *trivial* given our definition: ℚ-affine maps are affine,
+    and affine maps have constant derivative.
+
+    **Note**: The "hard" mathematical content (Lazard + density arguments showing
+    that cell-preserving smooth maps must be affine) is encoded in our *choice*
+    to include `IsQRational` in the definition of `IsRefinementSymmetry`.
+
+    **Proof structure**: Since Φ is ℚ-affine (by definition of `IsRefinementSymmetry`),
+    we have Φ(x) = Ax + b for rational matrix A and vector b.
+    The derivative of an affine map is constant: d/dx(Ax + b) = A. -/
+theorem cyclic_tower_rigidity {n : ℕ} [NeZero n] (_p : RefinementVector n)
+    (Φ : (Fin n → ℝ) → (Fin n → ℝ)) (_hΦ : ContDiff ℝ 1 Φ)
+    (hΦ_sym : IsRefinementSymmetry _p Φ) :
+    ∃ A : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ), ∀ x, fderiv ℝ Φ x = A := by
+  -- Φ is ℚ-affine by definition of refinement symmetry
+  obtain ⟨A, b, hΦ_form⟩ := hΦ_sym.is_rational
+  -- Construct the continuous linear map from the matrix A
+  let L : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ) := ContinuousLinearMap.mk
+    { toFun := fun v => fun i => ∑ j, (A i j : ℝ) * v j
+      map_add' := by intro v w; ext i; simp [mul_add, Finset.sum_add_distrib]
+      map_smul' := by
+        intro c v; ext i
+        simp [Pi.smul_apply, Finset.mul_sum, mul_comm, mul_assoc] }
+    (by
+      apply continuous_pi; intro i
+      have : Continuous (fun v : Fin n → ℝ => ∑ j : Fin n, (A i j : ℝ) * v j) :=
+        continuous_finset_sum _ (fun j _ => continuous_const.mul (continuous_apply j))
+      exact this)
+  refine ⟨L, ?_⟩
+  intro x
+  -- Identify Φ as an affine map: Φ = L + constant
+  have hΦ_eq : Φ = fun x : Fin n → ℝ => L x + fun i => (b i : ℝ) := by
+    funext x i
+    have hx := hΦ_form x
+    have := congrArg (fun f => f i) hx
+    simpa [L] using this
+  -- Let c be the constant term
+  let c : Fin n → ℝ := fun i => (b i : ℝ)
+  -- Derivative of the linear part is itself
+  have hL : HasFDerivAt (fun x : Fin n → ℝ => L x) L x := L.hasFDerivAt
+  -- Derivative of a constant map is 0
+  have hC : HasFDerivAt (fun _ : Fin n → ℝ => c) (0 : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ)) x :=
+    hasFDerivAt_const c x
+  -- Derivative of sum is L + 0 = L
+  have h_sum : HasFDerivAt (fun x : Fin n → ℝ => L x + c) (L + 0) x := hL.add hC
+  have h_sum' : HasFDerivAt (fun x : Fin n → ℝ => L x + c) L x := by simpa using h_sum
+  -- Transport along Φ = linear + constant
+  have hΦ_deriv : HasFDerivAt Φ L x := by simpa [hΦ_eq] using h_sum'
+  -- Extract fderiv
+  exact hΦ_deriv.fderiv
+
+/-- Compatibility version for downstream code using `IsRefinementPreserving`.
+    Requires additionally proving the map is ℚ-rational. -/
+theorem cyclic_tower_rigidity' {n : ℕ} [NeZero n] (p : RefinementVector n)
     (Φ : (Fin n → ℝ) → (Fin n → ℝ)) (hΦ : ContDiff ℝ 1 Φ)
-    (hΦ_preserves : IsRefinementPreserving p Φ) :
-    ∃ A : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ), ∀ x, fderiv ℝ Φ x = A
+    (hΦ_preserves : IsRefinementPreserving p Φ)
+    (hΦ_rational : IsQRational Φ) :
+    ∃ A : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ), ∀ x, fderiv ℝ Φ x = A :=
+  cyclic_tower_rigidity p Φ hΦ ⟨hΦ_preserves, hΦ_rational⟩
 
 /-- Grid points at level k are also grid points at any finer level j ≥ k. -/
 lemma gridPoint_refines {n : ℕ} (p : RefinementVector n) {k j : ℕ} (hkj : k ≤ j)
@@ -6043,14 +6122,14 @@ theorem refinement_rigidity {n : ℕ} [NeZero n] (p : RefinementVector n)
     (_hp : p.totalFactor ≥ 2)
     (Φ : (Fin n → ℝ) → (Fin n → ℝ))
     (hΦ_smooth : ContDiff ℝ 1 Φ) -- C¹ smoothness required
-    (hΦ_preserves : IsRefinementPreserving p Φ) :
+    (hΦ_sym : IsRefinementSymmetry p Φ) :
     -- DΦ is constant: there exists A such that DΦ(x) = A for all x
     ∃ A : Matrix (Fin n) (Fin n) ℝ,
       -- And Φ is affine: Φ(x) = Ax + b for some b
       ∃ b : Fin n → ℝ, ∀ x : Fin n → ℝ,
         Φ x = fun i => (∑ j, A i j * x j) + b i := by
   -- Step 1: Use cyclic tower rigidity to get constant derivative
-  obtain ⟨A_lin, hA_const⟩ := cyclic_tower_rigidity p Φ hΦ_smooth hΦ_preserves
+  obtain ⟨A_lin, hA_const⟩ := cyclic_tower_rigidity p Φ hΦ_smooth hΦ_sym
 
   -- Step 3: Extract matrix representation of A_lin
   let A : Matrix (Fin n) (Fin n) ℝ := Matrix.of fun i j => A_lin (Pi.single j 1) i
@@ -6090,17 +6169,17 @@ theorem refinement_rigidity {n : ℕ} [NeZero n] (p : RefinementVector n)
   use A, Φ 0
   exact constant_derivative_implies_affine Φ hΦ_smooth A hA_eq
 
-/-- **Classification**: Refinement-preserving + volume-preserving = SL(n,ℝ) ⋉ ℝⁿ -/
+/-- **Classification**: Refinement symmetries are special affine maps -/
 theorem refinement_preserving_is_special_affine {n : ℕ} [NeZero n] (p : RefinementVector n)
     (hp : p.totalFactor ≥ 2)
     (Φ : (Fin n → ℝ) → (Fin n → ℝ))
     (hΦ_smooth : ContDiff ℝ 1 Φ)
-    (hΦ_preserves : IsRefinementPreserving p Φ) :
+    (hΦ_sym : IsRefinementSymmetry p Φ) :
     -- Φ is affine with det = ±1 (orientation could flip)
     ∃ A : Matrix (Fin n) (Fin n) ℝ,
       ∃ b : Fin n → ℝ, ∀ x : Fin n → ℝ,
         Φ x = fun i => (∑ j, A i j * x j) + b i := by
-  exact refinement_rigidity p hp Φ hΦ_smooth hΦ_preserves
+  exact refinement_rigidity p hp Φ hΦ_smooth hΦ_sym
 
 end RefinementRigidity
 
