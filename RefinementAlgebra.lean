@@ -50,15 +50,17 @@ Refinement by factor m acts via A_m = m^{-1/n}·I with det(A_m) = m⁻¹.
 
 | # | Axiom | Reference |
 |---|-------|-----------|
-| 12 | `cyclic_tower_rigidity` | Serre, LNM 1500 (1992); Robert, GTM 198 (2000) |
+| 12 | `cyclic_tower_rigidity` | Lazard, Publ. Math. IHÉS 26 (1965); Dixon et al. (2003) |
 
 This axiom captures profinite rigidity: grid points form (ℤ/mᵏℤ)ⁿ, and C¹ maps
-respecting this structure at all levels have constant derivative.
+respecting this structure at all levels have constant derivative. The key theorem
+is that every continuous homomorphism between p-adic Lie groups is analytic.
 
 ## References
 
-- Serre. "Lie Algebras and Lie Groups." LNM 1500. Springer (1992)
-- Robert. "A Course in p-adic Analysis." GTM 198. Springer (2000)
+- Lazard. "Groupes analytiques p-adiques." Publ. Math. IHÉS 26 (1965), 5–219.
+- Dixon, Du Sautoy, Mann, Segal. "Analytic Pro-p Groups." Cambridge (2003), Ch. 8.
+- Bourbaki. "Groupes et algèbres de Lie, Chap. 2–3." Hermann (1972).
 - Connes. "Noncommutative Geometry." Academic Press (1994)
 -/
 
@@ -5322,11 +5324,21 @@ axiom parallelism_forces_constant_derivative {n : ℕ}
     ∏ᵢ ℤₚᵢ (the p-adic completion) are exactly GL(n, ∏ᵢ ℤₚᵢ), and the C¹
     constraint forces this to be a constant linear map.
 
+    The foundational theorem is: "Every continuous homomorphism between p-adic
+    Lie groups is analytic; in particular the analytical structure is uniquely
+    determined by the underlying topological structure." (Lazard, 1965)
+
+    For ℤₚⁿ as an additive group, End(ℤₚⁿ) = Mₙ(ℤₚ), and continuous automorphisms
+    are exactly GL(n, ℤₚ). A C¹ map on ℝⁿ preserving all grid levels restricts to
+    a continuous automorphism on the profinite completion, hence must be linear.
+
     **References**:
-    - Serre, J.-P. "Lie Algebras and Lie Groups." Lecture Notes in Mathematics 1500.
-      Springer, 1992. Part II (p-adic Lie groups).
-    - Robert, A.M. "A Course in p-adic Analysis." Graduate Texts in Mathematics 198.
-      Springer, 2000. Chapter 5 (automorphisms of ℤₚⁿ). -/
+    - Lazard, M. "Groupes analytiques p-adiques."
+      Publ. Math. IHÉS 26 (1965), 5–219. https://eudml.org/doc/103856
+    - Dixon, Du Sautoy, Mann, Segal. "Analytic Pro-p Groups."
+      Cambridge Studies in Advanced Mathematics 61, 2nd ed. (2003), Ch. 8.
+    - Bourbaki, N. "Groupes et algèbres de Lie, Chapitres 2 et 3."
+      Hermann (1972); reprint Springer (2006). -/
 axiom cyclic_tower_rigidity {n : ℕ} [NeZero n] (p : RefinementVector n)
     (Φ : (Fin n → ℝ) → (Fin n → ℝ)) (hΦ : ContDiff ℝ 1 Φ)
     (hΦ_preserves : IsRefinementPreserving p Φ) :

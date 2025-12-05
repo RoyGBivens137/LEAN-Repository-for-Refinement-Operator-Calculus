@@ -4,8 +4,7 @@
 
 [![Lean 4](https://img.shields.io/badge/Lean-4-blue.svg)](https://leanprover.github.io/)
 [![Mathlib](https://img.shields.io/badge/Mathlib-latest-green.svg)](https://github.com/leanprover-community/mathlib4)
-[![CI](https://github.com/RoyGBivens137/LEAN-Repository-for-Refinement-Operator-Calculus/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/RoyGBivens137/LEAN-Repository-for-Refinement-Operator-Calculus/actions)
-[![License](https://img.shields.io/badge/License-Apache_2.0-orange.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
 
@@ -26,11 +25,11 @@ commutes via the partition function Z(β) = Tr(e^{-βĤ}).
 
 | Result | Description | Proof Status |
 |--------|-------------|--------------|
-| Casimir Universality | Categorical functor composition equality | `rfl` |
-| Coboundary Nilpotency | d² = 0 for discrete exterior calculus | Proved |
-| Cartan Identity | dκ + κd = (p+1)·id on p-cochains | Proved |
-| Partition Function | Z(β) = 1/(1 - m^{-β}) | Proved |
-| Gibbs Normalization | Σ ω_β(k) = 1 | Proved |
+| Casimir Universality | Categorical functor composition equality | ✅ `rfl` |
+| Coboundary Nilpotency | d² = 0 for discrete exterior calculus | ✅ Proved |
+| Cartan Identity | dκ + κd = (p+1)·id on p-cochains | ✅ Proved |
+| Partition Function | Z(β) = 1/(1 - m^{-β}) | ✅ Proved |
+| Gibbs Normalization | Σ ω_β(k) = 1 | ✅ Proved |
 
 ## File Structure
 
@@ -102,10 +101,16 @@ The KMS stationarity condition implies Ĥ|Ω_β⟩ = 0 in the GNS representation
 ## Citation
 
 ```bibtex
-Submitted to the Springer Journal of Automated Reasoning December 4th 2025. Citation pending.
+@misc{mullaghy2024grt,
+  author = {Mullaghy, Zachary},
+  title = {Geometric Refinement Theory: A Formalized Categorical Framework},
+  year = {2024},
+  publisher = {GitHub},
+  url = {https://github.com/RoyGBivens137/LEAN-Repository-for-Refinement-Operator-Calculus}
+}
 ```
 
-## Primary References
+## References
 
 - Connes, A. *Noncommutative Geometry*. Academic Press, 1994.
 - Moser, J. "On the volume elements on a manifold." Trans. AMS 120, 1965.
@@ -114,8 +119,8 @@ Submitted to the Springer Journal of Automated Reasoning December 4th 2025. Cita
 
 ## Acknowledgments
 
-AI assistance from Anthropic's Claude, OpenAI's ChatGPT, and Google's Gemini in strengthening proofs and formalization. Special Thanks to UF Mathematics/Physics and FSU Scientific Computing for their discussions and kindness during the construction of this work.
+AI assistance from Anthropic's Claude, OpenAI's ChatGPT, and Google's Gemini in strengthening proofs and formalization. Thanks to UF Mathematics/Physics and FSU Scientific Computing.
 
 ## License
 
-Apache 2.0
+MIT
