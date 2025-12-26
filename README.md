@@ -99,11 +99,9 @@ The spectral action S[D] = Tr(f(D/Λ)) and heat kernel Tr(e^{-tD²}) arise as sp
 ### Wheeler–DeWitt
 The KMS stationarity condition implies Ĥ|Ω_β⟩ = 0 in the GNS representation—the **refinement Wheeler–DeWitt constraint**.
 
-## Citation
+## Citations 
 
-```bibtex
-Submitted to the Springer Journal of Automated Reasoning December 4th 2025. Citation pending.
-```
+Currently a work in progress. Building infrastructure for eventual submission to Journal of Noncommutative Geometry awaiting an axiom free build.
 
 ## Primary References
 
